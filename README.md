@@ -123,7 +123,7 @@ WHERE w.created_at < '2012-04-14'
 <p align="center">
   <kbd><img src="assets/tabel_traffic_cvr.png" width=400px> </kbd> <br>
   
-  2 — The conversion rate is less than 4%, which is 2.92%, hence we have to reduce bids. We should to monitor impact of bid reduction and analyze performance trending by device type in order to refine bidding strategy.
+  2 — The conversion rate is less than 4%, which is 2.88%, hence we have to reduce bids. We should to monitor impact of bid reduction and analyze performance trending by device type in order to refine bidding strategy.
 </p>
 
 <br>
