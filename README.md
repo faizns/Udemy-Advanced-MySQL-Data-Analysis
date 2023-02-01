@@ -32,7 +32,7 @@ We'll use MySQL to understand how customers access and interact with the site, a
   <summary>Click to view ERD</summary>
 
 <p align="center">
-  <kbd><img src="assets/erd.png" width=800px> </kbd> <br>
+  <kbd><img width="800" alt="erd" src="https://user-images.githubusercontent.com/115857221/216096971-49eb3432-6cdf-49c4-afcc-78e386d6cb50.png"> </kbd> <br>
 </p>
 
 </details>
@@ -55,7 +55,7 @@ coming from** and **which channels are driving the highest quality traffic.**
 ### **1. Finding Top Traffic Sources**
 
 <p align="center">
-  <kbd><img src="assets/email1_1.png" width=350px> </kbd> <br>
+  <kbd><img width="330" alt="email1_1" src="https://user-images.githubusercontent.com/115857221/216097426-509b18d3-7fc6-4bc2-ba07-fff86f586ee3.png"> </kbd> <br>
 </p>
 <br>
 
@@ -80,7 +80,7 @@ ORDER BY 4 DESC
 
 **Result :**
 <p align="center">
-  <kbd><img src="assets/tabel_top_traffic.png" width=500px> </kbd> <br>
+  <kbd> <img width="500" alt="tabel_top_traffic" src="https://user-images.githubusercontent.com/115857221/216097751-9cf81722-0923-48ce-87cb-67c4c43e1a15.png"> </kbd> <br>
  
   1 — Most sessions came from gsearch nonbrand campaign traffic. Drill deeper to explore potential optimization opportunities.
 </p>
@@ -88,14 +88,14 @@ ORDER BY 4 DESC
 <br>
 
 <p align="center">
-  <kbd><img src="assets/email1_2.png" width=350px> </kbd> <br>
+  <kbd><img width="330" alt="email1_2" src="https://user-images.githubusercontent.com/115857221/216097918-e6348a69-05b2-4e59-8ad6-b754076673e9.png"> <br>
 </p>
 <br>
 
 ### **2. Traffic Conversion Rate**
 
 <p align="center">
-  <kbd><img src="assets/email1_3.png" width=350px> </kbd> <br>
+  <kbd><img width="330" alt="email1_3" src="https://user-images.githubusercontent.com/115857221/216098062-374ab27d-37be-4de3-b002-d1a1767b17d6.png"> </kbd> <br>
 </p>
 <br>
 
@@ -121,7 +121,7 @@ WHERE w.created_at < '2012-04-14'
 
 **Result :**
 <p align="center">
-  <kbd><img src="assets/tabel_traffic_cvr.png" width=400px> </kbd> <br>
+  <kbd><img width="380" alt="tabel_traffic_cvr" src="https://user-images.githubusercontent.com/115857221/216098251-06f32653-8c9c-478a-83f5-0d286efbdb70.png"> </kbd> <br>
   
   2 — The conversion rate is less than 4%, which is 2.88%, hence we have to reduce bids. We should to monitor impact of bid reduction and analyze performance trending by device type in order to refine bidding strategy.
 </p>
@@ -129,7 +129,7 @@ WHERE w.created_at < '2012-04-14'
 <br>
 
 <p align="center">
-  <kbd><img src="assets/email1_4.png" width=350px> </kbd> <br>
+  <kbd><img width="330" alt="email1_4" src="https://user-images.githubusercontent.com/115857221/216098576-b5d77b1b-b1b6-4036-9196-b5828c308a9d.png"> </kbd> <br>
 </p>
 <br>
 
@@ -146,7 +146,7 @@ segments of paid traffic, so that you can optimize your marketing budget**.
 ### **3. Traffic Source Trending**
 
 <p align="center">
-  <kbd><img src="assets/email1_5.png" width=350px> </kbd> <br>
+  <kbd> <img width="330" alt="email1_5" src="https://user-images.githubusercontent.com/115857221/216099554-e346086f-ed31-424a-9228-a312830672ba.png"> </kbd> <br>
 </p>
 <br>
 
@@ -170,7 +170,7 @@ GROUP BY YEAR(created_at), WEEK(created_at)
 
 **Result :**
 <p align="center">
-  <kbd><img src="assets/tabel_traffic_trending.png" width=250px> </kbd> <br>
+  <kbd> <img width="230" alt="tabel_traffic_trending" src="https://user-images.githubusercontent.com/115857221/216099721-18749403-05ba-4a2c-b562-ed10076282e1.png"> </kbd> <br>
   
   3 — The sessions after 2021-04-15 have dropped. Continue to monitor session volume. We could make the campaigns more efficient to increase volume again, by maximising volume at the lowest possible bid.
 </p>
@@ -178,14 +178,14 @@ GROUP BY YEAR(created_at), WEEK(created_at)
 <br>
 
 <p align="center">
-  <kbd><img src="assets/email1_6.png" width=350px> </kbd> <br>
+  <kbd><img width="330" alt="email1_6" src="https://user-images.githubusercontent.com/115857221/216099857-425a6456-57e6-4ab3-9b4a-62db953f5c98.png"> </kbd> <br>
 </p>
 <br>
 
 ### **4. Traffic Source Bid Optimization**
 
 <p align="center">
-  <kbd><img src="assets/email1_7.png" width=350px> </kbd> <br>
+  <kbd> <img width="330" alt="email1_7" src="https://user-images.githubusercontent.com/115857221/216099972-b8f55eb5-a1c6-4c5b-9d33-369544050738.png"> </kbd> <br>
 </p>
 <br>
 
@@ -213,7 +213,7 @@ ORDER BY 4 DESC
 
 **Result :**
 <p align="center">
-  <kbd><img src="assets/tabel_bid_opz.png" width=500px> </kbd> <br>
+  <kbd><img width="480" alt="tabel_bid_opz" src="https://user-images.githubusercontent.com/115857221/216100125-db73b60e-23b2-4491-9233-a72886b31827.png"> </kbd> <br>
   
   4 — Desktop bids were driving nearly 4% of the conversion rate, so we should transfer the paid traffic spent to the desktop channel instead.
 </p>
@@ -221,14 +221,14 @@ ORDER BY 4 DESC
 <br>
 
 <p align="center">
-  <kbd><img src="assets/email1_8.png" width=350px> </kbd> <br>
+  <kbd> <img width="330" alt="email1_8" src="https://user-images.githubusercontent.com/115857221/216100248-c15d75af-7f7b-4dd5-8be9-9262689b9eb8.png"> </kbd> <br>
 </p>
 <br>
 
 ### **5. Traffic Source Segment Trending**
 
 <p align="center">
-  <kbd><img src="assets/email1_9.png" width=350px> </kbd> <br>
+  <kbd> <img width="330" alt="email1_9" src="https://user-images.githubusercontent.com/115857221/216100406-763878cb-f233-45a4-985c-7b95e8d3679f.png"> </kbd> <br>
 </p>
 <br>
 
@@ -254,7 +254,7 @@ GROUP BY YEAR(created_at), WEEK(created_at)
 
 **Result :**
 <p align="center">
-  <kbd><img src="assets/tabel_segm_tren.png" width=425px> </kbd> <br>
+  <kbd> <img width="405" alt="tabel_segm_tren" src="https://user-images.githubusercontent.com/115857221/216100559-cb7142a5-8022-4ad5-b183-ab005bc5212d.png"> </kbd> <br>
   
   5 — Desktop volume increased after bidding on 2012-05-19, but mobile volume dropped dramatically. Focusing on desktops was able to optimize spending efficiently. Continue to monitor device-level volume and be aware of the impact bid levels has. Continue to monitor conversion performance at the device-level to optimize spend.
 </p>
@@ -262,7 +262,7 @@ GROUP BY YEAR(created_at), WEEK(created_at)
 <br>
 
 <p align="center">
-  <kbd><img src="assets/email1_10.png" width=350px> </kbd> <br>
+  <kbd> <img width="330" alt="email1_10" src="https://user-images.githubusercontent.com/115857221/216100702-a9f3a551-0558-48fe-a10e-76a07ab8445c.png"> </kbd> <br>
 </p>
 <br>
 
