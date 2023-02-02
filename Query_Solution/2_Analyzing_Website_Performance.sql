@@ -14,6 +14,7 @@ GROUP BY 1
 ORDER BY 2 DESC
 
 
+
 -- 2. Identifying Top Entry Pages
 WITH first_entry AS (
 	SELECT
@@ -31,6 +32,7 @@ LEFT JOIN website_pageviews w
 	ON f.first_pageview = w.website_pageview_id
 GROUP BY 1
 ORDER BY 1
+
 
 
 -- 3. Calculating Bounce Rates
@@ -54,8 +56,8 @@ SELECT
     l.landing_page,
     COUNT(p.website_pageview_id) AS count_of_pageview
 FROM landing_page_home l
-LEFT JOIN website_pageviews p
-	ON l.website_session_id = p.website_session_id
+	LEFT JOIN website_pageviews p
+		ON l.website_session_id = p.website_session_id
 GROUP BY 1,2 
 HAVING COUNT(p.website_pageview_id) = 1
 
@@ -65,9 +67,10 @@ SELECT
     COUNT(DISTINCT b.website_session_id) AS bounced_session,
     COUNT(DISTINCT b.website_session_id)/COUNT(DISTINCT l.website_session_id) AS bounce_rate
 FROM landing_page_home l
-LEFT JOIN bounced_home b
-	ON l.website_session_id = b.website_session_id
+	LEFT JOIN bounced_home b
+		ON l.website_session_id = b.website_session_id
 GROUP BY l.landing_page
+
 
 
 -- 4. Analyzing Landing Page Tests
@@ -85,12 +88,12 @@ SELECT
     MIN(p.website_pageview_id) AS first_landing_page,
     p.pageview_url AS landing_page
 FROM website_pageviews p
-JOIN website_sessions s
-	ON s.website_session_id = p.website_session_id
-	AND s.created_at BETWEEN '2012-06-19' AND '2012-07-28'  -- lander-1 displayed to user at 2012-06-19
-	AND utm_source = 'gsearch'
-	AND utm_campaign ='nonbrand'
-	AND p.pageview_url IN ('/home', '/lander-1')
+	JOIN website_sessions s
+		ON s.website_session_id = p.website_session_id
+		AND s.created_at BETWEEN '2012-06-19' AND '2012-07-28'  -- lander-1 displayed to user at 2012-06-19
+		AND utm_source = 'gsearch'
+		AND utm_campaign ='nonbrand'
+		AND p.pageview_url IN ('/home', '/lander-1')
 GROUP BY 1, 3
 
 -- c. Count page views for each session to identify bounces (website_pageview_id = 1) each landing page
@@ -100,8 +103,8 @@ SELECT
     l.landing_page,
     COUNT(p.website_pageview_id) AS count_of_page_viewed
 FROM landing_page_test l
-LEFT JOIN website_pageviews p
-	ON l.website_session_id = p.website_session_id
+	LEFT JOIN website_pageviews p
+		ON l.website_session_id = p.website_session_id
 GROUP BY 1, 2
 HAVING COUNT(p.website_pageview_id) = 1
 
@@ -112,9 +115,10 @@ SELECT
     COUNT(DISTINCT b.website_session_id) AS bounced_session,
 	COUNT(DISTINCT b.website_session_id)/COUNT(DISTINCT l.website_session_id) AS bounce_rate
 FROM landing_page_test l
-LEFT JOIN bounced_test b
-	ON l.website_session_id = b.website_session_id
+	LEFT JOIN bounced_test b
+		ON l.website_session_id = b.website_session_id
 GROUP BY l.landing_page
+
 
 
 -- 5. Landing Page Trend Analysis
@@ -126,12 +130,12 @@ SELECT
     p.pageview_url AS landing_page,
     MIN(p.website_pageview_id) AS first_landing_page
 FROM website_pageviews p
-JOIN website_sessions s
-	ON s.website_session_id = p.website_session_id
-	AND s.created_at BETWEEN '2012-06-01' AND '2012-08-31' 
-	AND utm_source = 'gsearch'
-	AND utm_campaign ='nonbrand'
-	AND p.pageview_url IN ('/home', '/lander-1')
+	JOIN website_sessions s
+		ON s.website_session_id = p.website_session_id
+		AND s.created_at BETWEEN '2012-06-01' AND '2012-08-31' 
+		AND utm_source = 'gsearch'
+		AND utm_campaign ='nonbrand'
+		AND p.pageview_url IN ('/home', '/lander-1')
 GROUP BY 1, 2, 3
 
 -- b. Count page views for each session to identify bounces (website_pageview_id = 1)
@@ -141,8 +145,8 @@ SELECT
     l.landing_page,
     COUNT(p.website_pageview_id) AS count_of_page_viewed
 FROM landing_page_trend l
-LEFT JOIN website_pageviews p
-	ON l.website_session_id = p.website_session_id
+	LEFT JOIN website_pageviews p
+		ON l.website_session_id = p.website_session_id
 GROUP BY 1, 2
 HAVING COUNT(p.website_pageview_id) = 1
 
@@ -153,9 +157,10 @@ SELECT
     COUNT(DISTINCT CASE WHEN l.landing_page = '/home' THEN l.website_session_id ELSE NULL END) AS home_sessions,
 	COUNT(DISTINCT CASE WHEN l.landing_page = '/lander-1' THEN l.website_session_id ELSE NULL END) AS lander_sessions
 FROM landing_page_trend l
-LEFT JOIN bounced_trend b
-	ON l.website_session_id = b.website_session_id
+	LEFT JOIN bounced_trend b
+		ON l.website_session_id = b.website_session_id
 GROUP BY WEEK(l.created_at)
+
 
 
 -- 6. Building Conversion Funnels
@@ -221,6 +226,7 @@ SELECT
     to_billing / to_shipping AS shipping_click_rate,
     to_thankyou / to_billing AS billing_click_rate
 FROM session_page
+
 
 
 -- 7. Analyzing Conversion Funnel Test
