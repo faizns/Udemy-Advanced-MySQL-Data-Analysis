@@ -382,7 +382,7 @@ Landing page analysis and testing is about **understanding the performance of yo
 Analyze landing page performance, for the homepage specifically.
 **Bounce Rate** = Total one-pages visits / Total entrance visits
 
-**Step :**
+**Steps :**
 - Find the first `website_pageview_id` for relavant seasson with filter to date **< '2012-06-14'** and `pageview_url` is **'/home'**
 - Count page views for each session to identify bounces (`website_pageview_id` = 1)
 - Summarize by counting total session and bounced session
@@ -467,7 +467,7 @@ GROUP BY l.landing_page
     
 Help Morgan measure and analyze a new page that she thinks will improve performance, and analyze the results of an A/B split test against the homepage. A/B test on **\lander-1** and **\home** for **gsearch nonbrand** campaign.
 
-**Step :**
+**Steps :**
 - Find when **/lander-1** was created on the website by use either date or pageview id to limit the results
 - Find the first `website_pageview_id` for relavant season with filter by date periode, between **'2012-06-01' and '2012-08-31'**
 - Count page views for each session to identify bounces (`website_pageview_id` = 1) each landing page
@@ -551,7 +551,9 @@ GROUP BY l.landing_page
 **Result :**
 
 <p align="center">
-  <kbd> <img width="420" alt="4_step4" src="https://user-images.githubusercontent.com/115857221/216294535-4e2eeeae-ae4f-4085-871f-f5345b277d92.png"> </kbd> <br>
+  <kbd><img width="450" alt="4_step4" src="https://user-images.githubusercontent.com/115857221/216294535-4e2eeeae-ae4f-4085-871f-f5345b277d92.png"> </kbd> <br>
+  
+  4 — All traffict was directed to home until 2012-06-17, and starting on 2012-08-05, all traffic was directed to lander-1. There has been improvement as the bounce rate decreased from more than 60% to about 50%. The /lander-1 page changes are operating as well.
 </p>
 <br>
 
@@ -560,4 +562,22 @@ GROUP BY l.landing_page
 </p>
 <br>
 
+### 📌 **Business Concept: Analyzing and Testing Conversion Funnels**
+Conversion funnel analysis is about **understanding and optimizing each step of your user’s experience on their journey toward purchasing your products**
+
+### 📌 **Common Use Cases: Analyzing and Testing Conversion Funnels**
+- Identifying the most common paths customers take before purchasing your products
+- Identifying how many of your users continue on to each next step in your conversion flow, and how many users abandon at each step
+- Optimizing critical pain points where users are abandoning, so that you can convert more users and sell more products
+
+When we perform conversion funnel analysis, we will look at each step in our conversion flow to see how many customers drop off and how many continue on at each step. <br>
+
+
+### **5. Landing Page Trend Analysis**
+
+
+### **6. Building Conversion Funnels**
+
+
+### **7. Analyzing Conversion Funnel Test**
 
