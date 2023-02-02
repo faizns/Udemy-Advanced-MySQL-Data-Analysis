@@ -26,7 +26,7 @@ WITH first_entry AS (
     )
 SELECT 
 	w.pageview_url AS landing_page,
-    COUNT(f.website_session_id) AS session_hitting_this_landing_page
+	COUNT(f.website_session_id) AS session_hitting_this_landing_page
 FROM first_entry f
 	LEFT JOIN website_pageviews w
 		ON f.first_pageview = w.website_pageview_id
