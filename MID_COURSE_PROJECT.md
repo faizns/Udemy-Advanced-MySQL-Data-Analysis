@@ -172,8 +172,8 @@ WHERE created_at < '2012-10-27'
 From the output we can see:
 - Source of traffic from gsearch and bsearch
 - Based on the output :
-    - If source, campaign, and http referral is NULL, then it is direct traffic: users type in the website link in the browser's search bar.
-    - If source and campaign is NULL, but there is http referral, then it is organic search: coming from search engine and not tagged w
+    - If source, campaign, and http referral is NULL, then it is direct traffic: users type in the website link in the browser's search bar
+    - If source and campaign is NULL, but there is http referral, then it is organic search: coming from search engine and not tagged with paid parameters
 <br>
 
 ```sql
@@ -233,3 +233,317 @@ GROUP BY 1, 2
 
 ---
 
+#### 💡*6 - For the gsearch lander test, please estimate the revenue that test earned us (Hint: Look at the increase in CVR from the test (Jun 19 – Jul 28), and use nonbrand sessions and revenue since then to calculate incremental value)*
+
+**Step :**
+- Find lander-1 test was created and the first website_pageview_id, retricting to home and lander-1
+- Create summary, join the result with order_id and aggregat for session, order, and cvr
+- Find most recent pageview for gsearch nonbrand where traffic was sent to /home and estimate revenue that test earned from lander-1
+<br>
+
+**Query :**
+```sql
+-- Find lander-1 test was created
+SELECT 
+    MIN(created_at),
+    MIN(website_pageview_id) AS lander1_pv
+FROM website_pageviews
+WHERE pageview_url = '/lander-1'
+-- it was created at 2012-06-19 00:35:54 and pageview_id start at 23504
+
+-- Find the first website_pageview_id, retricting to home and lander-1
+CREATE TEMPORARY TABLE landing_page_test
+SELECT
+    p.website_session_id,
+    MIN(p.website_pageview_id) AS min_pageview_id,
+    p.pageview_url AS landing_page
+FROM website_pageviews p
+    JOIN website_sessions s
+        ON s.website_session_id = p.website_session_id
+        AND s.created_at < '2012-07-28'
+        AND s.utm_source = 'gsearch'
+        AND s.utm_campaign ='nonbrand'
+        AND p.website_pageview_id >= 23504 -- = at 2012-06-19
+WHERE p.pageview_url IN ('/home', '/lander-1')
+GROUP BY 1, 3
+```
+<br>
+
+<p align="center">
+  <kbd><img width="400" alt="Q6 1" src="https://user-images.githubusercontent.com/115857221/216869912-746b0d5a-014e-4197-ba61-1581f932be96.png"></kbd> <br>
+</p>
+<br>
+
+
+```sql
+-- Join the result with order_id and aggregat for session, order, and cvr
+WITH session_order_landing AS
+(
+    SELECT 
+        t.website_session_id,
+        t.landing_page,
+        o.order_id
+    FROM landing_page_test t
+        LEFT JOIN orders o
+            ON t.website_session_id = o.website_session_id
+)
+SELECT 
+    landing_page,
+    COUNT(DISTINCT website_session_id) AS sessions,
+    COUNT(DISTINCT order_id) AS orders,
+    ROUND(100*(COUNT(DISTINCT order_id)/COUNT(DISTINCT website_session_id)),2) AS percent_cvr
+FROM session_order_landing
+GROUP BY 1
+```
+<br>
+
+**Result :**
+
+<p align="center">
+  <kbd><img width="400" alt="Q6 2" src="https://user-images.githubusercontent.com/115857221/216870310-e6951b46-801c-4e88-923e-eb097c348474.png"> </kbd> <br>
+  
+  6 — The home page conversion rate is 3.18% and lander-1 is 4.06%. The incremental difference in website performance is 1.08% using lander-1.
+</p>
+<br>
+
+```sql
+-- find most recent pageview for gsearch nonbrand where traffic was sent to /home
+SELECT
+    MAX(s.website_session_id)
+FROM website_sessions s
+    LEFT JOIN website_pageviews p
+        ON s.website_session_id = p.website_session_id
+WHERE s.created_at < '2012-11-27'
+    AND s.utm_source = 'gsearch'
+    AND s.utm_campaign = 'nonbrand'
+    AND p.pageview_url = '/home'
+    -- result: the recent website_session_id = 17145
+
+SELECT
+    COUNT(website_session_id) AS session_since_test
+FROM website_sessions
+WHERE created_at < '2012-11-27'
+    AND utm_source = 'gsearch'
+    AND utm_campaign = 'nonbrand'
+    AND website_session_id > 17145 
+    -- result: there are 22972 session since the test
+```
+<br>
+
+<p align="center">
+  <kbd><img width="200" alt="Q6 3" src="https://user-images.githubusercontent.com/115857221/216870579-20ae4d55-cc71-40bb-bc69-7303e0d52567.png"> </kbd> <br>
+</p>
+<br>
+
+- We can estimate the increase in revenue from the increase in orders :
+    - 22972 session x 1.08% (incremental % of order) = 248
+    - So, estimated at least 248 incremental orders since 29 Jul using the lander-1 page
+- Calculate monthly increase (July - November) : 
+    - 248 / 4 = 64 additional order/month
+<br>
+
+---
+
+#### 💡*7 - I’d like to tell the story of our website performance improvements over the course of the first 8 months. Could you pull session to order conversion rates, by month?*
+
+**Step :**
+- Check pageview_url from two pages was created and create summary all pageviews for relevant session
+- Categorise website sessions under `segment` by 'saw_home_page' or 'saw_lander_page' and aggregate data to assess funnel performance
+- Convert aggregated result to percentage of click rate
+<br>
+
+**Query :**
+```sql
+-- find all pageview_url from two pages (Jun 19 – Jul 28)
+SELECT DISTINCT
+    p.pageview_url
+FROM website_pageviews p
+    LEFT JOIN website_sessions s
+        ON p.website_session_id = s.website_session_id
+WHERE p.created_at < '2012-11-27'
+    AND s.utm_source = 'gsearch'
+    AND s.utm_campaign = 'nonbrand'
+    AND p.website_pageview_id >= 23504
+```
+<br>
+
+<p align="center">
+  <kbd><img width="200" alt="Q7 1" src="https://user-images.githubusercontent.com/115857221/216871503-56b23bc7-6c46-4d52-ab3c-c000649c4e81.png"> </kbd> <br>
+</p>
+<br>
+
+```sql
+-- Create summary all pageviews for relevant session
+CREATE TEMPORARY TABLE pageview_levels
+WITH pageviews_cte AS
+(
+    SELECT
+        s.website_session_id,
+        p.created_at,
+        p.pageview_url,
+        CASE WHEN p.pageview_url = '/home' THEN 1 ELSE 0 END AS home_p,
+        CASE WHEN p.pageview_url = '/lander-1' THEN 1 ELSE 0 END AS lander1_p,
+        CASE WHEN p.pageview_url = '/products' THEN 1 ELSE 0 END AS product_p,
+        CASE WHEN p.pageview_url = '/the-original-mr-fuzzy' THEN 1 ELSE 0 END AS mrfuzzy_p,
+        CASE WHEN p.pageview_url = '/cart' THEN 1 ELSE 0 END AS chart_p,
+        CASE WHEN p.pageview_url = '/shipping' THEN 1 ELSE 0 END AS shipping_p,
+        CASE WHEN p.pageview_url = '/billing' THEN 1 ELSE 0 END AS billing_p,
+        CASE WHEN p.pageview_url = '/thank-you-for-your-order' THEN 1 ELSE 0 END AS thankyou_p
+    FROM website_sessions s
+        LEFT JOIN website_pageviews p
+            ON s.website_session_id = p.website_session_id
+    WHERE s.created_at BETWEEN '2012-06-19' AND '2012-07-28'
+        AND p.website_pageview_id >= 23504 
+        AND s.utm_source = 'gsearch'
+        AND s.utm_campaign ='nonbrand'
+        AND p.pageview_url IN ('/home', '/lander-1', '/products', '/the-original-mr-fuzzy', '/cart', '/shipping', '/billing', '/thank-you-for-your-order')
+    ORDER BY 1, 2
+)
+SELECT
+    website_session_id, 
+    MAX(home_p) AS home_p,
+    MAX(lander1_p) AS lander1_p,
+    MAX(product_p) AS product_p,
+    MAX(mrfuzzy_p) AS mrfuzzy_p,
+    MAX(chart_p) AS chart_p,
+    MAX(shipping_p) AS shipping_p,
+    MAX(billing_p) AS billing_p,
+    MAX(thankyou_p) AS thankyou_p
+FROM pageviews_cte
+GROUP BY 1
+
+```
+<br>
+
+<p align="center">
+  <kbd><img width="800" alt="Q7 2" src="https://user-images.githubusercontent.com/115857221/216871805-e7f06ea1-44d7-409c-b3d5-fd59d452640b.png"></kbd> <br>
+</p>
+<br>
+
+```sql
+-- Categorise website sessions under `segment` by 'saw_home_page' or 'saw_lander_page'
+-- Aggregate data to assess funnel performance
+CREATE TEMPORARY TABLE session_page
+    SELECT 
+        CASE 
+            WHEN home_p = 1 THEN 'saw_home_page'
+            WHEN lander1_p = 1 THEN 'saw_lander_page'
+            ELSE 'can_not_identify'
+        END AS segment,
+        COUNT(DISTINCT website_session_id) AS sessions,
+        COUNT(DISTINCT CASE WHEN product_p = 1 THEN website_session_id ELSE NULL END) AS to_product,
+        COUNT(DISTINCT CASE WHEN mrfuzzy_p = 1 THEN website_session_id ELSE NULL END) AS to_mrfuzzy,
+        COUNT(DISTINCT CASE WHEN chart_p = 1 THEN website_session_id ELSE NULL END) AS to_chart,
+        COUNT(DISTINCT CASE WHEN shipping_p = 1 THEN website_session_id ELSE NULL END) AS to_shipping,
+        COUNT(DISTINCT CASE WHEN billing_p = 1 THEN website_session_id ELSE NULL END) AS to_billing,
+        COUNT(DISTINCT CASE WHEN thankyou_p = 1 THEN website_session_id ELSE NULL END) AS to_thankyou
+FROM pageview_levels
+GROUP BY 1
+```
+<br>
+
+<p align="center">
+  <kbd><img width="800" alt="Q7 3" src="https://user-images.githubusercontent.com/115857221/216872031-d1c1ea3d-a586-4b7d-af60-3067a9b846c1.png"></kbd> <br>
+</p>
+<br>
+
+```sql
+-- Convert aggregated website sessions to percentage of click rate by dividing by total sessions
+SELECT
+    segment,
+    sessions,
+    ROUND(100*(to_product / sessions),2) AS segment_clickrate,
+    ROUND(100*(to_mrfuzzy / to_product),2) AS product_clikrate,
+    ROUND(100*(to_chart / to_mrfuzzy),2) AS mrfuzzy_clikrate,
+    ROUND(100*(to_shipping / to_chart),2) AS chart_clickrate,
+    ROUND(100*(to_billing / to_shipping),2) AS shipping_clickrate,
+    ROUND(100*(to_thankyou / to_billing),2) AS billing_clikrate
+FROM session_page
+```
+<br>
+
+**Result :**
+<p align="center">
+  <kbd><img width="10000" alt="Q7 4" src="https://user-images.githubusercontent.com/115857221/216872174-806c2ef9-2be4-4637-9a0a-e3c7b74fc81c.png"></kbd> <br>
+  
+  7 — Lander-1 page has a better click trough rate than the home page.
+</p>
+<br>
+
+---
+
+#### 💡*8 - I’d love for you to quantify the impact of our billing test, as well. Please analyze the lift generated from the test (Sep 10 – Nov 10), in terms of revenue per billing page session, and then pull the number of billing page sessions for the past month to understand monthly impact.*
+
+**Step :**
+- Check billing-2 test was created
+- Calculate or aggregate the sessions and `price_usd` for /billing and /billing-2
+- Calculate billing page sessions for the past month (Sep 27 – Nov 27) and estimate revenue
+<br>
+
+**Query :**
+
+```sql
+-- Find billing-2 test was created
+SELECT 
+    MIN(created_at),
+    MIN(website_pageview_id) AS lander1_pv
+FROM website_pageviews
+WHERE pageview_url = '/billing-2'
+
+-- it was cheates at 2012-09-10 00:13:05 billing 2 page view start from 53550
+-- that's make sense (Sep 10 – Nov 10)
+
+WITH billing_cte AS
+(
+    SELECT
+        p.website_session_id,
+        p.pageview_url,
+        o.price_usd
+    FROM website_pageviews p
+        LEFT JOIN orders o
+            ON p.website_session_id = o.website_session_id
+    WHERE p.created_at BETWEEN '2012-09-10' AND '2012-11-10'
+        AND p.pageview_url IN ('/billing', '/billing-2')
+)
+SELECT 
+    pageview_url AS billing_page,
+    COUNT(DISTINCT website_session_id) AS sessions,
+    SUM(price_usd)/COUNT(DISTINCT website_session_id) AS revenue_per_billing_page
+FROM billing_cte
+GROUP BY 1
+
+```
+<br>
+
+**Result :**
+
+<p align="center">
+  <kbd><img width="400" alt="Q8 1" src="https://user-images.githubusercontent.com/115857221/216872732-449b6f78-abd7-4cd2-9053-36b7320fa6f3.png"></kbd> <br>
+  
+  8 — billing-2 has a larger revenue per billing page contribution with a lift of 8.51 dollars/pageview
+</p>
+<br>
+
+
+```sql
+-- calculate billing page sessions for the past month
+SELECT 
+    COUNT(website_session_id) AS sessions
+FROM website_pageviews
+WHERE created_at BETWEEN '2012-10-27' AND '2012-11-27'
+    AND pageview_url IN ('/billing', '/billing-2')
+```
+<br>
+
+<p align="center">
+  <kbd><img width="200" alt="Q8 2" src="https://user-images.githubusercontent.com/115857221/216872912-55eb860b-85f6-4bb0-b9f4-6d6e32d42b9f.png"></kbd> <br>
+</p>
+<br>
+
+- We can calculate from the past month :
+    - Total session a month  = 1193
+    - Value billing test = 1193 X 8.51 (lift) = 10152.43
+- So there are 1193 sessions and with the increase of 8.51 dolar average revenue per session with a positive impact 10152.43 dolar increase in revenue.<br>
+<br>
+
+---
