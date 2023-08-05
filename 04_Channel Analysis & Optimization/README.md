@@ -6,16 +6,16 @@ Analyzing a portfolio of marketing channels is about **bidding efficiently and u
 - Understanding which marketing channels are driving the most sessions and orders through your website
 - Understanding differences in user characteristics and conversion performance across marketing channels
 - Optimizing bids and allocating marketing spend across a multi-channel portfolio to achieve maximum performance
+<br>
 
 ### **Task**
 ### **1. Analyzing Channel Portofolios**
 **Channel Portofolio Analysis** : to identify traffic coming from multiple marketing channels, we will use utm parameters stored in our sessions table
 
 <p align="center">
-  <kbd> </kbd> <br>
+  <kbd> <img width="320" alt="1 channel portofolio" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/720a17d8-6200-47f7-954d-ef40d14eedbb"></kbd> <br>
 </p>
 <br>
-
 
 **Steps :**
 - Pull weekly sessions from 22 Aug - 29 Nov for gsearch and bsearch, utm campaign nonbrand
@@ -40,25 +40,17 @@ GROUP BY WEEK(created_at);
 
 **Result :**
 <p align="center">
-  <kbd>  </kbd> <br>
- 
-  1 — 
-</p>
-
-<br>
-
-<p align="center">
-  <kbd> </kbd><br>
+  <kbd>  <img width="400" alt="1" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/13c1960a-30e6-4ed5-870e-f073b759b6e5"> </kbd> <br>
+  1 — bsearch tends to get roughly a third the traffic of gsearch
 </p>
 <br>
 
 ### **2. Comparing Channel Characteristics**
 
 <p align="center">
-  <kbd> </kbd> <br>
+  <kbd><img width="320" alt="2 comparing" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/a0838523-777c-4eb6-a469-a57ad09acf1b"></kbd> <br>
 </p>
 <br>
-
 
 **Steps :**
 - Pull mobile session from 22 Aug - 30 Nov for gsearch and bsearch, utm campaign nonbrand
@@ -84,17 +76,11 @@ GROUP BY 1;
 
 **Result :**
 <p align="center">
-  <kbd>  </kbd> <br>
- 
-  2 — 
-</p>
-
-<br>
-
-<p align="center">
-  <kbd> </kbd><br>
+  <kbd>  <img width="500" alt="2" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/4ff35644-5f15-4417-b6a3-8fdb96669439"></kbd> <br>
+  2 — Most of the traffic coming from mobile with gsearch campaigns
 </p>
 <br>
+
 
 ### **3. Cross Channel Bid Optimization**
 
