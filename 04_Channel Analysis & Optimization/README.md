@@ -82,10 +82,10 @@ GROUP BY 1;
 <br>
 
 
-### **3. Cross Channel Bid Optimization**
+### **3. Cross-Channel Bid Optimization**
 
 <p align="center">
-  <kbd> </kbd> <br>
+  <kbd>  <img width="320" alt="3 cross chanel" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/4722a5f5-9745-428b-89d6-15a7ad13194b"> </kbd> <br>
 </p>
 <br>
 
@@ -118,23 +118,18 @@ GROUP BY 1,2;
 
 **Result :**
 <p align="center">
-  <kbd>  </kbd> <br>
- 
-  3 — 
+  <kbd> <img width="500" alt="3" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/1d9d7852-5b07-4da7-9ac4-3c257bfa0a7b"></kbd> <br>
+  3 — gsearch campaign has a higher conversion rate in both desktop and mobile compared to bsearch campaign
 </p>
 
-<br>
-
-<p align="center">
-  <kbd> </kbd><br>
-</p>
 <br>
 
 ### **4. Channel Portofolio Trends**
 
 <p align="center">
-  <kbd> </kbd> <br>
+  <kbd> <img width="320" alt="4  trend" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/7b1f56b8-e8b4-47c6-beab-c605d6fae8ba"> </kbd> <br>
 </p>
+
 <br>
 
 
@@ -167,16 +162,10 @@ GROUP BY WEEK(created_at);
 
 **Result :**
 <p align="center">
-  <kbd>  </kbd> <br>
- 
-  4 — 
+  <kbd> <img width="800" alt="4" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/536a2f66-642f-402d-bec2-1ee76855ccf6"></kbd> <br>
+  4 — The desktop bsearch sessions stayed at 4% of gsearch sessions but dropped after bids were lowered in weeks 2-3 of December. This drop could also be influenced by events like Black Friday, Cyber Monday, and other seasonal factors. For mobile sessions, there was a significant decline after bid reduction, but it varied during December, making it difficult to determine if the decline was solely due to reduced bids or other factors too.
 </p>
 
-<br>
-
-<p align="center">
-  <kbd> </kbd><br>
-</p>
 <br>
 
 
@@ -187,19 +176,22 @@ Analyzing your branded or direct traffic is about **keeping a pulse on how well 
 - Identifying how much revenue you are  generating from direct traffic – this is high  margin revenue without a direct cost of customer acquisition
 - Understanding whether or not your paid traffic is generating a “halo” effect, and promoting additional direct traffic
 - Assessing the impact of various initiatives on  how many customers seek out your business
+<br>
 
 ### **5. Analyzing Free Channels**
 **Free Traffic Analysis** : to identify traffic coming to your site that you are not paying for with marketing campaigns, we will again turn to our utm params.
 <br>
 
 <p align="center">
-  <kbd> </kbd> <br>
+  <kbd><img width="320" alt="5  free channel" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/afbf096d-75d9-4020-ba95-8b9abc4d693a"> </kbd> <br>
 </p>
+
 <br>
 
 
 **Steps :**
-
+- Analyze organic search, direct type in, and paid brand or nonbrand sessions
+- Pull monthly organic search, direct type in, and paid brand sessions, present in % of paid nonbrand.
 
 <br>
 
@@ -222,9 +214,7 @@ WHERE created_at < '2012-12-23';
 
 **Result :**
 <p align="center">
-  <kbd>  </kbd> <br>
- 
-  5 — 
+  <kbd> <img width="500" alt="5 1" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/f9459670-74f5-49e1-bcad-b63b182ed57a"> </kbd> <br>
 </p>
 
 <br>
@@ -261,6 +251,14 @@ SELECT
 FROM channel_cte
 GROUP BY MONTH(created_at)
 ```
+<br>
+
+**Result :**
+<p align="center">
+  <kbd> <img width="950" alt="5 2" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/82513176-ce03-4d2a-a45a-8fd56ba85d9b"></kbd> <br>
+  5 — They are growing as a percentage of paid traffic volume
+</p>
+<br>
 
 ---
 
@@ -272,8 +270,111 @@ Analyzing business patterns is about **generating insights to help you maximize 
 ### 📌 **Common Use Cases: Analyzing Seasonality & Business Patterns**
 - Day-parting analysis to understand how much support staff you should have at different times of day or days of the week
 - Analyzing seasonality to better prepare for upcoming spikes or slowdowns in demand
+<br>
 
 ### **Task**
 ### **1. Analyzing Seasonality**
 
+<p align="center">
+  <kbd> <img width="320" alt="6" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/6de5ce42-c72c-4cb6-9384-9a6364193edf"> </kbd> <br>
+</p>
+<br>
+
+**Steps :**
+- Pull monthly and weekly orders and sessions in 2012
+- months/week_start_date | sessions | orders | cvr
+
+<br>
+
+**Query :**
+```sql
+-- monthly seasons
+SELECT
+    MONTH(w.created_at) AS months,
+    COUNT(DISTINCT w.website_session_id) AS sessions,
+    COUNT(DISTINCT o.order_id) AS orders,
+    ROUND(100*(COUNT(DISTINCT o.order_id)/COUNT(DISTINCT w.website_session_id)),2) AS cvr
+FROM website_sessions w
+    LEFT JOIN orders o
+        ON w.website_session_id = o.website_session_id
+WHERE w.created_at < '2013-01-01'
+GROUP BY MONTH(w.created_at);
+```
+<br>
+
+**Result :**
+<p align="center">
+  <kbd><img width="250" alt="6 week" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/de535168-5622-4e23-a94e-7f87318590fe"></kbd> <br>
+  1.1 — Conversion rates trended upward each month during 2012
+</p>
+<br>
+
+**Query :**
+```sql
+-- weekly seasons
+SELECT
+    MIN(DATE(w.created_at)) AS week_start_date,
+    COUNT(DISTINCT w.website_session_id) AS sessions,
+    COUNT(DISTINCT o.order_id) AS orders
+    ROUND(100*(COUNT(DISTINCT o.order_id)/COUNT(DISTINCT w.website_session_id)),2) AS cvr
+FROM website_sessions w
+    LEFT JOIN orders o
+        ON w.website_session_id = o.website_session_id
+WHERE w.created_at < '2013-01-01'
+GROUP BY WEEK(w.created_at);
+```
+<br>
+
+**Result :**
+<p align="center">
+  <kbd> <img width="250" alt="6 WEEKS" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/5da36707-7b2d-4302-9ab6-c02df6f675b1"></kbd><br>
+  1.2 — The 3rd week of November saw a significant increase in traffic and orders.
+</p>
+<br>
+
 ### **2. Analyzing Business Patterns**
+
+<p align="center">
+  <kbd> <img width="320" alt="7" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/eba5ee77-82f2-41fa-818d-a4dde1d71ec9"></kbd> <br>
+</p>
+<br>
+
+**Steps :**
+- Pull sessions beside hour and day of the week in 15 Sep - 15 Nov 2012
+- hr | monday | tuesday | ... |
+
+<br>
+
+**Query :**
+```sql
+WITH time_session_cte AS(
+SELECT
+    DATE(created_at) AS dt,
+    WEEKDAY(created_at) AS wk,
+    HOUR(created_at) AS hr,
+    COUNT(DISTINCT website_session_id) AS sessions
+FROM website_sessions
+WHERE created_at BETWEEN '2012-09-15' AND '2012-11-15'
+GROUP BY 1,2,3)
+
+SELECT
+    hr,
+    ROUND(AVG(CASE WHEN wk = 0 THEN sessions ELSE NULL END),0) AS monday,
+    ROUND(AVG(CASE WHEN wk = 1 THEN sessions ELSE NULL END),0) AS tuesday,
+    ROUND(AVG(CASE WHEN wk = 2 THEN sessions ELSE NULL END),0) AS wednesday,
+    ROUND(AVG(CASE WHEN wk = 3 THEN sessions ELSE NULL END),0) AS thursday,
+    ROUND(AVG(CASE WHEN wk = 4 THEN sessions ELSE NULL END),0) AS friday,
+    ROUND(AVG(CASE WHEN wk = 5 THEN sessions ELSE NULL END),0) AS saturday,
+    ROUND(AVG(CASE WHEN wk = 6 THEN sessions ELSE NULL END),0) AS sunday
+FROM time_session_cte
+GROUP BY 1
+ORDER BY 1;
+```
+<br>
+
+**Result :**
+<p align="center">
+  <kbd> <img width="450" alt="hourly" src="https://github.com/faizns/Udemy-Advanced-MySQL-Data-Analysis/assets/115857221/17ffd1d3-88a0-49c7-9bc5-903520785a2c"></kbd> <br>
+  2 — Plan on one support staff around the clock and then we should double up to two staff members from 8 am to 8 pm Monday through Friday
+</p>
+<br>
