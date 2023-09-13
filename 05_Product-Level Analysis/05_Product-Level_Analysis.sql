@@ -159,3 +159,117 @@ GROUP BY 1
 
 ------------------------------------------------------------------------
 -- 5. Cross Selling
+-- Step 1: 
+CREATE TEMPORARY TABLE sessions_seeing_cart
+SELECT
+	CASE 
+		WHEN created_at < '2013-09-25' THEN 'Pre_cross_sell'
+        WHEN created_at >= '2012-01-06' THEN 'Post_cross_sell'
+        ELSE 'check query!'
+	END AS period,
+    website_session_id AS cart_session_id,
+    website_pageview_id AS cart_pageview_id
+FROM website_pageviews
+WHERE created_at BETWEEN '2013-08-25' AND '2013-10-25'
+	AND pageview_url = '/cart';
+
+-- Step 2: 
+CREATE TEMPORARY TABLE cart_sessions_seeing_another_page
+SELECT 
+	ssc.period,
+    ssc.cart_session_id,
+    MIN(wp.website_pageview_id) AS pv_id_after_chart
+FROM sessions_seeing_cart ssc
+	LEFT JOIN website_pageviews wp
+		ON wp.website_session_id = ssc.cart_session_id
+        AND wp.website_pageview_id > ssc.cart_pageview_id
+GROUP BY 1, 2
+HAVING
+	MIN(wp.website_pageview_id) IS NOT NULL;
+    
+
+-- Step 3:
+CREATE TEMPORARY TABLE pre_post_sessions_orders
+SELECT
+	period,
+    cart_session_id,
+    order_id,
+    items_purchased,
+    price_usd
+FROM sessions_seeing_cart ssc
+	JOIN orders od
+		ON ssc.cart_session_id = od.website_session_id;
+
+-- Step 4:
+WITH sum_cte AS(
+	SELECT
+		ssc.period,
+		ssc.cart_session_id,
+		CASE WHEN cssap.cart_session_id IS NULL THEN 0 ELSE 1 END AS clicked_to_another_pg,
+		CASE WHEN ppso.order_id IS NULL THEN 0 ELSE 1 END AS placed_order,
+		ppso.items_purchased,
+		ppso.price_usd
+	FROM sessions_seeing_cart ssc
+		LEFT JOIN cart_sessions_seeing_another_page cssap
+			ON ssc.cart_session_id = cssap.cart_session_id
+		LEFT JOIN pre_post_sessions_orders ppso
+			ON ssc.cart_session_id = ppso.cart_session_id
+	ORDER BY cart_session_id)
+SELECT 
+	period,
+    COUNT(DISTINCT cart_session_id) AS cart_sessions,
+    SUM(clicked_to_another_pg) AS click_throughs,
+    SUM(placed_order) AS orders_placed,
+    SUM(items_purchased) AS product_purchased,
+    SUM(items_purchased)/SUM(placed_order) AS product_per_order,
+    SUM(price_usd) AS revenue,
+    SUM(price_usd)/SUM(placed_order) AS aov,
+    SUM(price_usd)/COUNT(DISTINCT cart_session_id) AS rev_per_cart_sessions
+FROM sum_cte
+GROUP BY 1;
+
+
+------------------------------------------------------------------------
+-- 6. Product Portofolio Expansion
+SELECT
+	CASE 
+		WHEN ws.created_at < '2013-12-12' THEN 'Pre_Birthday_Bear'
+        WHEN ws.created_at >= '2013-12-12' THEN 'Post_Birthday_Bear'
+        ELSE 'Check query'
+	END AS period,
+	100*(COUNT(DISTINCT o.order_id)/COUNT(DISTINCT ws.website_session_id)) AS conv_rate,
+	SUM(o.price_usd)/COUNT(DISTINCT o.order_id) AS avg_order,
+	SUM(o.items_purchased)/COUNT(DISTINCT o.order_id) AS prod_per_order,
+	SUM(o.price_usd)/COUNT(DISTINCT ws.website_session_id) AS rev_per_session
+FROM website_sessionS ws
+	LEFT JOIN orders o
+		ON o.website_session_id = ws.website_session_id
+WHERE ws.created_at BETWEEN '2013-11-12' AND '2014-01-12'
+GROUP BY 1;
+
+
+------------------------------------------------------------------------
+-- 7. Product Refund Rates
+SELECT
+	YEAR (oi.created_at) AS yr,
+    MONTH(oi.created_at) AS mo,
+    COUNT(DISTINCT CASE WHEN product_id = 1 THEN oi.order_item_id ELSE NULL END) AS p1_orders,
+    COUNT(DISTINCT CASE WHEN product_id = 1 THEN oir.order_item_id ELSE NULL END)
+		/COUNT(DISTINCT CASE WHEN product_id = 1 THEN oi.order_item_id ELSE NULL END) AS p1_refund_rt,
+	
+    COUNT(DISTINCT CASE WHEN product_id = 2 THEN oi.order_item_id ELSE NULL END) AS p2_orders,
+    COUNT(DISTINCT CASE WHEN product_id = 2 THEN oir.order_item_id ELSE NULL END)
+		/COUNT(DISTINCT CASE WHEN product_id = 2 THEN oi.order_item_id ELSE NULL END) AS p2_refund_rt,
+	
+    COUNT(DISTINCT CASE WHEN product_id = 3 THEN oi.order_item_id ELSE NULL END) AS p3_orders,
+    COUNT(DISTINCT CASE WHEN product_id = 3 THEN oir.order_item_id ELSE NULL END)
+		/COUNT(DISTINCT CASE WHEN product_id = 3 THEN oi.order_item_id ELSE NULL END) AS p3_refund_rt,
+	
+    COUNT(DISTINCT CASE WHEN product_id = 4 THEN oi.order_item_id ELSE NULL END) AS p4_orders,
+    COUNT(DISTINCT CASE WHEN product_id = 4 THEN oir.order_item_id ELSE NULL END)
+		/COUNT(DISTINCT CASE WHEN product_id = 4 THEN oi.order_item_id ELSE NULL END) AS p4_refund_rt
+FROM order_items oi
+	LEFT JOIN order_item_refunds oir
+		ON oi.order_item_id = oir.order_item_id
+WHERE oi.created_at < '2014-10-15'
+GROUP BY 1,2;
